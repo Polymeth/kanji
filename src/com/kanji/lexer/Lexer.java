@@ -8,10 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Lexer {
+    private final static String END_OF_FILE = "EoF";
+    private final static String END_OF_LINE = "";
+    private final static String DELIMITER = " ";
+
     private String content;
+    public List<Token> tokens = new ArrayList<>();
     public Lexer(String str) {
         this.content = str;
-        lex(content);
+        tokens = lex(content);
     }
 
     private List<Token> lex (String str) {
@@ -19,10 +24,24 @@ public class Lexer {
         Source source = new Source(str);
         while (source.chars() != "EoF"){
             if (source.chars().matches("[a-zA-Z]")) {
-                tokens.add(new Token(TokenType.String, source.chars()));
+                tokens.add(scanString(source));
+            } else if (source.chars().matches("[.0-9]")) {
+                tokens.add(new Token(TokenType.Number, source.chars()));
+                source.nextChar();
+            } else if (source.chars().matches("[=\\/\\(\\)\\']")) {
+                tokens.add(new Token(TokenType.Operator, source.chars()));
                 source.nextChar();
             }
         }
         return tokens;
+    }
+
+    private Token scanString(Source source){
+        String str = "";
+        while (source.chars().matches("[a-zA-Z]") && source.chars() != END_OF_FILE && source.chars() != END_OF_LINE && source.chars() != DELIMITER) {
+            str+= source.chars();
+            source.nextChar();
+        }
+        return (new Token(TokenType.String, str));
     }
 }
