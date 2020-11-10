@@ -12,7 +12,7 @@ public class Lexer {
     private final static String END_OF_LINE = "";
     private final static String DELIMITER = " ";
 
-    private String content;
+    private final String content;
     public List<Token> tokens = new ArrayList<>();
     public Lexer(String str) {
         this.content = str;
@@ -22,14 +22,22 @@ public class Lexer {
     private List<Token> lex (String str) {
         List<Token> tokens = new ArrayList<>();
         Source source = new Source(str);
-        while (source.chars() != "EoF"){
+        while (!source.chars().equals("EoF")){
             if (source.chars().matches("[a-zA-Z]")) {
                 tokens.add(scanString(source));
             } else if (source.chars().matches("[.0-9]")) {
                 tokens.add(new Token(TokenType.Number, source.chars()));
                 source.nextChar();
-            } else if (source.chars().matches("[=\\/\\(\\)\\']")) {
+            } else if (source.chars().matches("[=\\/\\(\\)\\'\\+\\-]")) {
                 tokens.add(new Token(TokenType.Operator, source.chars()));
+                source.nextChar();
+            } else if (source.chars().equals(";")) {
+                tokens.add(new Token(TokenType.EOL, source.chars()));
+                source.nextChar();
+            } else if (source.chars().equals(":")) {
+                tokens.add(new Token(TokenType.EOL, source.chars()));
+                source.nextChar();
+            } else {
                 source.nextChar();
             }
         }

@@ -5,4 +5,5 @@ public enum TokenType {
     Number,
     Operator,
     EOF,
+    EOL
 }

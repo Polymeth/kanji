@@ -1,0 +1,7 @@
+let cool list of numbers;
+add 1 to cool;
+add 2 to cool;
+
+for numbers in cool:
+    print numbers;
+
